@@ -31,7 +31,7 @@ function addGalleryItems(items) {
 function openModal(event) {
   window.addEventListener('keydown', onPressEsc);
   window.addEventListener('keydown', toggleImg);
-  if (event.target != refs.gallery) {
+  if (event.target.tagName === 'IMG') {
     refs.modalBody.classList.add('is-open');
   }
 }
@@ -45,24 +45,14 @@ function addImageModal(event) {
 
 function closeModal(event) {
   window.removeEventListener('keydown', toggleImg);
-  if (event.target.nodeName === 'BUTTON') {
-    refs.modalBody.classList.remove('is-open');
-    refs.modalImg.removeAttribute('src');
-    refs.modalImg.removeAttribute('alt');
-  }
-  if (event.target === refs.modalOverlay) {
-    refs.modalBody.classList.remove('is-open');
-    refs.modalImg.removeAttribute('src');
-    refs.modalImg.removeAttribute('alt');
-  }
+  if (event.target.nodeName === 'BUTTON') clearAributes();
+  if (event.target === refs.modalOverlay) clearAributes();
 }
 
 function closeModalByEsc() {
   window.removeEventListener('keydown', toggleImg);
   window.removeEventListener('keydown', onPressEsc);
-  refs.modalBody.classList.remove('is-open');
-  refs.modalImg.removeAttribute('src');
-  refs.modalImg.removeAttribute('alt');
+  clearAributes();
 }
 
 function onPressEsc(event) {
@@ -71,21 +61,23 @@ function onPressEsc(event) {
   }
 }
 
+function clearAributes() {
+  refs.modalBody.classList.remove('is-open');
+  refs.modalImg.removeAttribute('src');
+  refs.modalImg.removeAttribute('alt');
+}
+
 function toggleImg(event) {
   if (event.code === 'ArrowRight') {
-    const index = Number(event.target.getAttribute('data-index'));
-    console.log('index', index);
-    const nextElem = document.querySelector(`a[data-index="${index + 1}"]`);
-    console.log(nextElem);
+    let index = Number(event.target.getAttribute('data-index'));
+    const nextElem = document.querySelector(`a[data-index="${index += 1}"]`);
     const imageLink = nextElem.getAttribute('href');
     refs.modalImg.removeAttribute('src');
     refs.modalImg.setAttribute('src', imageLink);
   }
   if (event.code === 'ArrowLeft') {
-    const index = Number(event.target.getAttribute('data-index'));
-    console.log('index', index);
-    const prevElem = document.querySelector(`a[data-index="${index - 1}"]`);
-    console.log(prevElem);
+    let index = Number(event.target.getAttribute('data-index'));
+    const prevElem = document.querySelector(`a[data-index="${index -= 1}"]`);
     const imageLink = prevElem.getAttribute('href');
     refs.modalImg.removeAttribute('src');
     refs.modalImg.setAttribute('src', imageLink);
