@@ -1,8 +1,5 @@
 import images from './gallery-items.js';
 
-// ArrowRight
-// ArrowLeft
-
 const refs = {
   gallery: document.querySelector('.js-gallery'),
   modalBody: document.querySelector('.js-lightbox'),
@@ -20,7 +17,7 @@ function addGalleryItems(items) {
     galleryList.classList.add('gallery__item');
     galleryLink.classList.add('gallery__link');
     galleryLink.setAttribute('href', item.original);
-    galleryLink.setAttribute('data-index', indexCounter += 1);
+    galleryLink.setAttribute('data-index', (indexCounter += 1));
     galleryImg.classList.add('gallery__image');
     galleryImg.setAttribute('src', item.preview);
     galleryImg.setAttribute('data-source', item.original);
@@ -30,19 +27,10 @@ function addGalleryItems(items) {
     refs.gallery.append(galleryList);
   });
 }
-addGalleryItems(images);
-
-refs.gallery.addEventListener('click', event => {
-  event.preventDefault();
-  openModal(event);
-  addImageModal(event);
-});
-
-refs.modalBody.addEventListener('click', closeModal);
-
 
 function openModal(event) {
   window.addEventListener('keydown', onPressEsc);
+  window.addEventListener('keydown', toggleImg);
   if (event.target != refs.gallery) {
     refs.modalBody.classList.add('is-open');
   }
@@ -56,6 +44,7 @@ function addImageModal(event) {
 }
 
 function closeModal(event) {
+  window.removeEventListener('keydown', toggleImg);
   if (event.target.nodeName === 'BUTTON') {
     refs.modalBody.classList.remove('is-open');
     refs.modalImg.removeAttribute('src');
@@ -69,6 +58,7 @@ function closeModal(event) {
 }
 
 function closeModalByEsc() {
+  window.removeEventListener('keydown', toggleImg);
   window.removeEventListener('keydown', onPressEsc);
   refs.modalBody.classList.remove('is-open');
   refs.modalImg.removeAttribute('src');
@@ -76,7 +66,38 @@ function closeModalByEsc() {
 }
 
 function onPressEsc(event) {
-  if(event.code === 'Escape'){
+  if (event.code === 'Escape') {
     closeModalByEsc();
   }
 }
+
+function toggleImg(event) {
+  if (event.code === 'ArrowRight') {
+    const index = Number(event.target.getAttribute('data-index'));
+    console.log('index', index);
+    const nextElem = document.querySelector(`a[data-index="${index + 1}"]`);
+    console.log(nextElem);
+    const imageLink = nextElem.getAttribute('href');
+    refs.modalImg.removeAttribute('src');
+    refs.modalImg.setAttribute('src', imageLink);
+  }
+  if (event.code === 'ArrowLeft') {
+    const index = Number(event.target.getAttribute('data-index'));
+    console.log('index', index);
+    const prevElem = document.querySelector(`a[data-index="${index - 1}"]`);
+    console.log(prevElem);
+    const imageLink = prevElem.getAttribute('href');
+    refs.modalImg.removeAttribute('src');
+    refs.modalImg.setAttribute('src', imageLink);
+  }
+}
+
+addGalleryItems(images);
+
+refs.gallery.addEventListener('click', event => {
+  event.preventDefault();
+  openModal(event);
+  addImageModal(event);
+});
+
+refs.modalBody.addEventListener('click', closeModal);
