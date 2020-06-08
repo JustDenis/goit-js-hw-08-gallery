@@ -40,6 +40,7 @@ function openModal(event) {
 function addImageModal(event) {
   const bigImgRef = event.target.getAttribute('data-source');
   const alt = event.target.getAttribute('alt');
+  imageUrl = bigImgRef;
   refs.modalImg.setAttribute('src', bigImgRef);
   refs.modalImg.setAttribute('alt', alt);
 }
@@ -68,33 +69,30 @@ function clearAributes() {
   refs.modalImg.removeAttribute('alt');
 }
 
-function getImageUrl(event, value) {
-  imageUrl = event.target.href;
+function getImageUrl(value) {
   const newUrl = bigImgRefs.reduce((acc, item, index) => {
     if (item === imageUrl) {
       if (value === 'right') {
         acc = bigImgRefs[index + 1];
-        imageUrl = acc;
-        return acc;
       }
       if (value === 'left') {
         acc = bigImgRefs[index - 1];
-        imageUrl = acc;
-        return acc;
       }
     }
+    return acc;
   }, '');
-  imageUrl = newUrl
-  return imageUrl;
+  return imageUrl = newUrl;
 }
 
-function handleArrowTap (event) {
-  if (event.code === 'ArrowRight'){
-    getImageUrl(event, 'right');
+function handleArrowTap(event) {
+  if (event.code === 'ArrowRight') {
+    getImageUrl('right');
+    refs.modalImg.src = '';
     refs.modalImg.src = imageUrl;
   }
-  if (event.code === 'ArrowLeft'){
-    getImageUrl(event, 'left')
+  if (event.code === 'ArrowLeft') {
+    getImageUrl('left');
+    refs.modalImg.src = '';
     refs.modalImg.src = imageUrl;
   }
 }
