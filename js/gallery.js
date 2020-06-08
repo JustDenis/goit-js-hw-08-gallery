@@ -7,6 +7,8 @@ const refs = {
   modalBtn: document.querySelector('button[data-action="close-modal"]'),
   modalOverlay: document.querySelector('.lightbox__content'),
 };
+const bigImgRefs = images.map(ref => ref.original);
+let imageUrl;
 
 function addGalleryItems(items) {
   let indexCounter = 0;
@@ -17,7 +19,6 @@ function addGalleryItems(items) {
     galleryList.classList.add('gallery__item');
     galleryLink.classList.add('gallery__link');
     galleryLink.setAttribute('href', item.original);
-    galleryLink.setAttribute('data-index', (indexCounter += 1));
     galleryImg.classList.add('gallery__image');
     galleryImg.setAttribute('src', item.preview);
     galleryImg.setAttribute('data-source', item.original);
@@ -30,7 +31,7 @@ function addGalleryItems(items) {
 
 function openModal(event) {
   window.addEventListener('keydown', onPressEsc);
-  window.addEventListener('keydown', toggleImg);
+  window.addEventListener('keydown', handleArrowTap);
   if (event.target.tagName === 'IMG') {
     refs.modalBody.classList.add('is-open');
   }
@@ -44,7 +45,7 @@ function addImageModal(event) {
 }
 
 function closeModal(event) {
-  window.removeEventListener('keydown', toggleImg);
+  window.removeEventListener('keydown', handleArrowTap);
   if (event.target.nodeName === 'BUTTON') clearAributes();
   if (event.target === refs.modalOverlay) clearAributes();
 }
@@ -67,20 +68,34 @@ function clearAributes() {
   refs.modalImg.removeAttribute('alt');
 }
 
-function toggleImg(event) {
-  if (event.code === 'ArrowRight') {
-    let index = Number(event.target.getAttribute('data-index'));
-    const nextElem = document.querySelector(`a[data-index="${index += 1}"]`);
-    const imageLink = nextElem.getAttribute('href');
-    refs.modalImg.removeAttribute('src');
-    refs.modalImg.setAttribute('src', imageLink);
+function getImageUrl(event, value) {
+  imageUrl = event.target.href;
+  const newUrl = bigImgRefs.reduce((acc, item, index) => {
+    if (item === imageUrl) {
+      if (value === 'right') {
+        acc = bigImgRefs[index + 1];
+        imageUrl = acc;
+        return acc;
+      }
+      if (value === 'left') {
+        acc = bigImgRefs[index - 1];
+        imageUrl = acc;
+        return acc;
+      }
+    }
+  }, '');
+  imageUrl = newUrl
+  return imageUrl;
+}
+
+function handleArrowTap (event) {
+  if (event.code === 'ArrowRight'){
+    getImageUrl(event, 'right');
+    refs.modalImg.src = imageUrl;
   }
-  if (event.code === 'ArrowLeft') {
-    let index = Number(event.target.getAttribute('data-index'));
-    const prevElem = document.querySelector(`a[data-index="${index -= 1}"]`);
-    const imageLink = prevElem.getAttribute('href');
-    refs.modalImg.removeAttribute('src');
-    refs.modalImg.setAttribute('src', imageLink);
+  if (event.code === 'ArrowLeft'){
+    getImageUrl(event, 'left')
+    refs.modalImg.src = imageUrl;
   }
 }
 
