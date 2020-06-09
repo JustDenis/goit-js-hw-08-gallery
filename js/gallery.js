@@ -6,12 +6,13 @@ const refs = {
   modalImg: document.querySelector('.lightbox__image'),
   modalBtn: document.querySelector('button[data-action="close-modal"]'),
   modalOverlay: document.querySelector('.lightbox__content'),
+  btnModalLeft: document.querySelector('button[data-control="left"]'),
+  btnModalRight: document.querySelector('button[data-control="right"]'),
 };
 const bigImgRefs = images.map(ref => ref.original);
 let imageUrl;
 
 function addGalleryItems(items) {
-  let indexCounter = 0;
   items.forEach(item => {
     const galleryList = document.createElement('li');
     const galleryLink = document.createElement('a');
@@ -81,20 +82,38 @@ function getImageUrl(value) {
     }
     return acc;
   }, '');
-  return imageUrl = newUrl;
+  if (newUrl !== undefined) {
+    imageUrl = newUrl;
+  }
+  return imageUrl;
 }
 
 function handleArrowTap(event) {
   if (event.code === 'ArrowRight') {
     getImageUrl('right');
-    refs.modalImg.src = '';
-    refs.modalImg.src = imageUrl;
+    changeModalImg();
   }
   if (event.code === 'ArrowLeft') {
     getImageUrl('left');
-    refs.modalImg.src = '';
-    refs.modalImg.src = imageUrl;
+    changeModalImg();
   }
+}
+
+function handleButtonClick(event) {
+  const currentButton = event.currentTarget.dataset.control;
+  if (currentButton === 'right') {
+    getImageUrl('right');
+    changeModalImg();
+  }
+  if (currentButton === 'left') {
+    getImageUrl('left');
+    changeModalImg();
+  }
+}
+
+function changeModalImg() {
+  refs.modalImg.src = '';
+  refs.modalImg.src = imageUrl;
 }
 
 addGalleryItems(images);
@@ -106,3 +125,7 @@ refs.gallery.addEventListener('click', event => {
 });
 
 refs.modalBody.addEventListener('click', closeModal);
+
+refs.btnModalLeft.addEventListener('click', handleButtonClick);
+
+refs.btnModalRight.addEventListener('click', handleButtonClick);

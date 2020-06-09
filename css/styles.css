@@ -138,3 +138,26 @@ body {
 .lightbox__button:focus {
   background-color: rgba(0, 0, 0, 0.5);
 }
+
+.btn-controls{
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 40px;
+  color: #fff;
+  cursor: pointer;
+  transition: 200ms linear;
+}
+
+.btn-controls:first-child{
+  margin-right: 80px;
+}
+
+.btn-controls:last-child{
+  margin-left: 80px;
+}
+
+.btn-controls:hover{
+  opacity: .5;
+  transition: 200ms linear;
+}
